@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net7.0;net8.0</TargetFrameworks>
+	  <ImplicitUsings>disable</ImplicitUsings>
+	  <Nullable Condition="'$(TargetFramework)' != 'netstandard2.0'">enable</Nullable>
+	  <Nullable Condition="'$(TargetFramework)' == 'netstandard2.0'">disable</Nullable>
+	  <LangVersion Condition="'$(TargetFramework)' == 'netstandard2.0'">9.0</LangVersion>
+	  <LangVersion Condition="'$(TargetFramework)' == 'netstandard2.1'">9.0</LangVersion>
+	  <NullableContextOptions>enable</NullableContextOptions>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <Title>Tiny Type Container</Title>
+	  <Authors>Jon2G</Authors>
+	  <Description>A tiny lightweight single file implementation of a type container for .net</Description>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <PackageProjectUrl>https://github.com/Jon2G/TinyTypeContainer</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/Jon2G/TinyTypeContainer</RepositoryUrl>
+	  <PackageTags>conatiner,lightweight,singleton,dependencies,c#,maui,netstandard,library,nugget,github,typecontainer,type</PackageTags>
+	  <NeutralLanguage>en</NeutralLanguage>
+	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
+	  <IncludeSymbols>True</IncludeSymbols>
+	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+
+</Project>
