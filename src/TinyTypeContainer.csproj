@@ -20,6 +20,8 @@
 	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
 	  <IncludeSymbols>True</IncludeSymbols>
 	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  <Copyright>none</Copyright>
+		<Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

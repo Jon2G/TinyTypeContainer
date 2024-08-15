@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace TinyTypeContainer
 {
@@ -27,8 +28,11 @@ namespace TinyTypeContainer
         }
         public static bool Has(Type type)
         {
-            DebugLog.WriteLine($"{nameof(Has)} '{type.FullName}'\n");
-            return InternalCollection.ContainsKey(type);
+            lock (InternalCollectionLock)
+            {
+                DebugLog.WriteLine($"{nameof(Has)} '{type.FullName}'\n");
+                return InternalCollection.ContainsKey(type);
+            }
         }
         public static bool Has(object val)
         {
@@ -61,15 +65,18 @@ namespace TinyTypeContainer
         }
         public static object? Register(Type type, object? value)
         {
-            DebugLog.WriteLine(nameof(Register) + type.FullName);
-
-            if (InternalCollection.ContainsKey(type))
+            lock (InternalCollectionLock)
             {
-                InternalCollection.Remove(type);
+                DebugLog.WriteLine(nameof(Register) + type.FullName);
+
+                if (InternalCollection.ContainsKey(type))
+                {
+                    InternalCollection.Remove(type);
+                }
+                if (value is null) { return value; }
+                InternalCollection.Add(type, value);
+                return value;
             }
-            if (value is null) { return value; }
-            InternalCollection.Add(type, value);
-            return value;
         }
 
         public static T? Register<T>(T? value)
@@ -98,21 +105,46 @@ namespace TinyTypeContainer
             return result;
         }
 
-
+        public static readonly object InternalCollectionLock = new object();
         public static object? Get(Type type)
         {
-            DebugLog.WriteLine($"{nameof(Get)} '{type.FullName}'");
-            if (InternalCollection.ContainsKey(type))
+            lock (InternalCollectionLock)
             {
-                return InternalCollection[type];
+                DebugLog.WriteLine($"{nameof(Get)} '{type.FullName}'");
+                if (InternalCollection.ContainsKey(type))
+                {
+                    return InternalCollection[type];
+                }
+                return null;
             }
-            return null;
         }
         public static T? Get<T>()
         {
             return (T?)Get(typeof(T));
         }
 
+        /// <summary>
+        /// Copies the values of src object into the current instance of registred value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="src">Source object</param>
+        /// <returns></returns>
+        public static T? Patch<T>(T? src)
+        {
+            T? current = Get<T>();
+            if (src is null || current is null)
+            {
+                return current;
+            }
+            foreach (var property in typeof(T).GetProperties())
+            {
+                if (property.CanWrite && property.SetMethod != null)
+                {
+                    property.SetValue(current, property.GetValue(src));
+                }
+            }
+            return Register<T>(current);
+        }
         public static T? Patch<T>(Func<T?, T?> action)
         {
             DebugLog.WriteLine(nameof(Patch) + typeof(T).FullName);
