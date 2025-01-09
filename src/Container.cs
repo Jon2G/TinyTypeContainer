@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 
 namespace TinyTypeContainer
 {
@@ -8,7 +9,7 @@ namespace TinyTypeContainer
     public static class Container
     {
         public static bool Debug { get; set; } = false;
-
+        public static bool IsEmpty => InternalCollection.Count == 0;
         private static Dictionary<Type, object?> _internalCollection = new Dictionary<Type, object?>();
 
         public static Dictionary<Type, object?> InternalCollection
@@ -49,30 +50,52 @@ namespace TinyTypeContainer
             if (val is null) { return; }
             Unregister(val.GetType());
         }
-        public static void Unregister(Type type)
+
+        public static void Unregister(KeyValuePair<Type, object>? type)
         {
-
-            DebugLog.WriteLine(nameof(Unregister) + type.FullName);
-
-            if (InternalCollection.ContainsKey(type))
+            if (type.HasValue)
             {
-                if (InternalCollection[type] is IDisposable disposable)
+                if (InternalCollection[type.Value.Key] is IDisposable disposable)
                 {
                     disposable.Dispose();
                 }
-                InternalCollection.Remove(type);
+                InternalCollection.Remove(type.Value.Key);
             }
         }
+        public static void Unregister(Type type)
+        {
+            DebugLog.WriteLine(nameof(Unregister) + type.FullName);
+            KeyValuePair<Type, object>? registeredMatchingType = GetKeyPair(type);
+            if (registeredMatchingType?.Key is not null)
+            {
+                Unregister(registeredMatchingType);
+                return;
+            }
+
+
+            throw new InvalidOperationException($"Type '{type.FullName}' not found in container");
+        }
+
+        private static KeyValuePair<Type, object?>? GetKeyPair(Type type)
+        {
+            return InternalCollection.FirstOrDefault(x => x.Key == type
+                                                          || x.Key.GetTypeInfo().IsAssignableFrom(type)
+                                                          || type.GetTypeInfo().IsAssignableFrom(x.Key)
+            );
+        }
+
         public static object? Register(Type type, object? value)
         {
             lock (InternalCollectionLock)
             {
                 DebugLog.WriteLine(nameof(Register) + type.FullName);
 
-                if (InternalCollection.ContainsKey(type))
+                var registeredMatchingType = GetKeyPair(type);
+                if (registeredMatchingType.Value.Key is not null)
                 {
-                    InternalCollection.Remove(type);
+                    Unregister(registeredMatchingType);
                 }
+
                 if (value is null) { return value; }
                 InternalCollection.Add(type, value);
                 return value;
@@ -111,9 +134,11 @@ namespace TinyTypeContainer
             lock (InternalCollectionLock)
             {
                 DebugLog.WriteLine($"{nameof(Get)} '{type.FullName}'");
-                if (InternalCollection.ContainsKey(type))
+                var registeredMatchingType = GetKeyPair(type);
+
+                if (registeredMatchingType?.Key is not null)
                 {
-                    return InternalCollection[type];
+                    return InternalCollection[registeredMatchingType.Value.Key];
                 }
                 return null;
             }
@@ -149,6 +174,11 @@ namespace TinyTypeContainer
         {
             DebugLog.WriteLine(nameof(Patch) + typeof(T).FullName);
             return Register<T>(action(Get<T>()));
+        }
+
+        public static void Clear()
+        {
+            InternalCollection.Clear();
         }
     }
 #nullable disable
