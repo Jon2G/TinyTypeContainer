@@ -32,6 +32,7 @@ jobs:
         with:
           url: "https://raw.githubusercontent.com/MADE-Apps/MADE.NET/refs/heads/main/build/GetBuildVersion.psm1"
           target: .\
+          filename: GetBuildVersion.psm1
 
       - name: GetBuildVersion.psm1
         run: |
