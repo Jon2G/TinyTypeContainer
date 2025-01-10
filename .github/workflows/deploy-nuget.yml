@@ -17,7 +17,7 @@ jobs:
       BUILD_CONFIG: "Release"
       SOLUTION: "TinyTypeContainer.sln"
       PROJECT: "TinyTypeContainer.csproj"
-      TEST_PROJECT: "Test/TinyTypeContainer.csproj"
+      TEST_PROJECT: "Test/Test.csproj"
 
     runs-on: ubuntu-latest
     defaults:
@@ -69,8 +69,14 @@ jobs:
       - name: Build solution
         run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
 
-      - name: Run tests
-        run: dotnet test $TEST_PROJECT
+      - name: Run unit tests with report
+        run: dotnet test $TEST_PROJECT --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: ./src/Test/TestResults/TestResults.trx
 
       - name: Publish
         if: startsWith(github.ref, 'refs/heads/release')
