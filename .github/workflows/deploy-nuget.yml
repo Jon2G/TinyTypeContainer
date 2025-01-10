@@ -70,9 +70,7 @@ jobs:
         run: dotnet test $TEST_PROJECT --configuration Release --no-build --logger "trx;LogFileName=./../../src/TestResults.trx"
 
       - name: Show files
-        run: |
-          ls -la
-          ls -la ./TestResults
+        run: ls -la
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
