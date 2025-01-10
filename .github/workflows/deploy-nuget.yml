@@ -25,6 +25,12 @@ jobs:
         working-directory: ./src
 
     steps:
+      - name: Restore dependencies
+        id: github_context_step
+        run: |
+          echo Branch: '${{ github.ref }}'
+          echo Base branch: '${{ github.base_ref }}'
+
       - uses: actions/checkout@v2
 
       - uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
@@ -79,5 +85,5 @@ jobs:
       #     path: ./TestResults.trx
 
       - name: Publish
-        if: startsWith(github.ref, 'refs/heads/release')
+        if: startsWith(github.ref, 'refs/heads/main') && startsWith(github.base_ref, 'refs/heads/release')
         run: dotnet nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
