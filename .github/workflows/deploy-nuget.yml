@@ -35,9 +35,6 @@ jobs:
           target: src/
           filename: GetBuildVersion.psm1
 
-      # - name: Show files
-      #   run: ls -la
-
       - name: GetBuildVersion.psm1
         run: |
           Import-Module .\GetBuildVersion.psm1
@@ -76,7 +73,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
-          path: ./TestResults.trx
+          path: ../Test/TestResults.trx
+          run: ls -la
 
       - name: Publish
         if: startsWith(github.ref, 'refs/heads/release')
