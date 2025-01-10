@@ -17,7 +17,7 @@ jobs:
       BUILD_CONFIG: "Release"
       SOLUTION: "TinyTypeContainer.sln"
       PROJECT: "TinyTypeContainer.csproj"
-      TEST_PROJECT: "Test/Test.csproj"
+      TEST_PROJECT: "../Test/Test.csproj"
 
     runs-on: ubuntu-latest
     defaults:
