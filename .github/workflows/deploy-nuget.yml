@@ -34,6 +34,9 @@ jobs:
           target: .\
           filename: GetBuildVersion.psm1
 
+      - name: Show files
+        run: ls -la
+
       - name: GetBuildVersion.psm1
         run: |
           Import-Module .\GetBuildVersion.psm1
