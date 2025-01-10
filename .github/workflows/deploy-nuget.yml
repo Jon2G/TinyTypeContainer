@@ -13,6 +13,7 @@ jobs:
     env:
       BUILD_CONFIG: "Release"
       SOLUTION: "TinyTypeContainer.sln"
+      PROJECT: "TinyTypeContainer.csproj"
 
     runs-on: ubuntu-latest
     defaults:
@@ -45,7 +46,7 @@ jobs:
         run: dotnet restore $SOLUTION
 
       - name: Build project
-        run: dotnet build <my project> --configuration Release
+        run: dotnet build $PROJECT --configuration Release
 
       - name: Build solution
         run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
