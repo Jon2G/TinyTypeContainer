@@ -35,9 +35,6 @@ jobs:
           target: src/
           filename: GetBuildVersion.psm1
 
-      # - name: Show files
-      #   run: ls -la
-
       - name: GetBuildVersion.psm1
         run: |
           Import-Module .\GetBuildVersion.psm1
@@ -70,14 +67,17 @@ jobs:
         run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
 
       - name: Run unit tests with report
-        run: dotnet test $TEST_PROJECT --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
+        run: dotnet test $TEST_PROJECT --configuration Release --no-build --logger "trx;LogFileName=./../../src/TestResults.trx"
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: TestResults
-          path: ./TestResults.trx
+      - name: Show files
+        run: ls -la
+
+      # - name: Upload test results
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: TestResults
+      #     path: ./TestResults.trx
 
       - name: Publish
         if: startsWith(github.ref, 'refs/heads/release')
-        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+        run: dotnet nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
