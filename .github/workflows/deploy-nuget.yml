@@ -67,7 +67,7 @@ jobs:
         run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
 
       - name: Run unit tests with report
-        run: dotnet test $TEST_PROJECT --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
+        run: dotnet test $TEST_PROJECT --configuration Release --no-build --logger "trx;LogFileName=./../../src/TestResults.trx"
 
       - name: Show files
         run: |
@@ -78,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
-          path: ./TestResults/TestResults.trx
+          path: TestResults.trx
 
       - name: Publish
         if: startsWith(github.ref, 'refs/heads/release')
