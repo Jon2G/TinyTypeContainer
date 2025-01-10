@@ -17,6 +17,7 @@ jobs:
       BUILD_CONFIG: "Release"
       SOLUTION: "TinyTypeContainer.sln"
       PROJECT: "TinyTypeContainer.csproj"
+      TEST_PROJECT: "Test/TinyTypeContainer.csproj"
 
     runs-on: ubuntu-latest
     defaults:
@@ -69,7 +70,7 @@ jobs:
         run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
 
       - name: Run tests
-        run: dotnet test $SOLUTION --no-restore --no-build --verbosity normal
+        run: dotnet test $TEST_PROJECT
 
       - name: Publish
         if: startsWith(github.ref, 'refs/heads/release')
