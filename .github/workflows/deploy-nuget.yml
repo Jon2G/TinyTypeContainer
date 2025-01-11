@@ -30,7 +30,7 @@ jobs:
         run: |
           echo commit message: '${{ github.event.head_commit.message }}'
           echo Branch: '${{ github.ref }}'
-          echo Branch: '${{ github.event_name }}'
+          echo Action: '${{ github.event_name }}'
 
       - name: Check merge commit
         if: startsWith(github.ref, 'refs/heads/main') && (!contains(github.event.head_commit.message, 'Merge pull request ') || !contains(github.event.head_commit.message,'release/'))
