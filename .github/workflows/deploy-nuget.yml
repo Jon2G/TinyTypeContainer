@@ -28,11 +28,12 @@ jobs:
 
       - name: Check branch
         run: |
-          echo Branch: '${{ github.ref }}'
-          echo Branch: '${{ github.head_ref }}'
+          echo Branch 1: '${{ github.ref }}'
+          echo Branch 2: '${{ github.event.pull_request.head.ref }}'
+          echo Branch 3: '${{ github.event.pull_request.base.ref }}'
 
       - uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
-        if: startsWith(github.ref, 'refs/heads/main') && startsWith(github.base_ref, 'refs/heads/release')
+        if: startsWith(github.ref, 'refs/heads/main') && startsWith(github.event.pull_request.head.ref, 'refs/heads/release')
         id: GetBuildVersion # Remember to give an ID if you need the output filename
         name: Download GetBuildVersion.psm1
         with:
