@@ -42,7 +42,7 @@ jobs:
         id: GetBuildVersion # Remember to give an ID if you need the output filename
         name: Download GetBuildVersion.psm1
         with:
-          url: "https://raw.githubusercontent.com/MADE-Apps/MADE.NET/refs/heads/main/build/GetBuildVersion.psm1"
+          url: "https://raw.githubusercontent.com/Jon2G/GetBuildVersion/refs/heads/main/GetBuildVersion.psm1"
           target: src/
           filename: GetBuildVersion.psm1
 
