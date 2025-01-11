@@ -28,11 +28,12 @@ jobs:
 
       - name: Check branch
         run: |
-          echo Branch: '${{ github.event.head_commit.message }}'
-          echo Branch: '${{ toJSON(github) }}'
+          echo commit message: '${{ github.event.head_commit.message }}'
+          echo Branch: '${{ github.ref }}'
+          echo Branch: '${{ github.event_name }}'
 
       - name: Check merge commit
-        if: startsWith(github.event_name,'merge') && startsWith(github.ref, 'refs/heads/main') && (!contains(github.event.head_commit.message, 'Merge pull request ') || !contains(github.event.head_commit.message,'release/'))
+        if: startsWith(github.ref, 'refs/heads/main') && (!contains(github.event.head_commit.message, 'Merge pull request ') || !contains(github.event.head_commit.message,'release/'))
         run: |
           echo INVALID COMMIT RELEASE MESSAGE: '${{ github.event.head_commit.message }}'
           exit 1
@@ -49,7 +50,7 @@ jobs:
       - name: GetBuildVersion.psm1
         if: startsWith(github.ref, 'refs/heads/main') && contains(github.event.head_commit.message, 'Merge pull request ') && contains(github.event.head_commit.message,'release/')
         run: |
-          export HEAD_COMMIT = '${{github.event.head_commit.message}}'
+          SET HEAD_COMMIT = '${{github.event.head_commit.message}}'
           Import-Module .\GetBuildVersion.psm1
           Write-Host $Env:HEAD_COMMIT
           $version = GetBuildVersion -VersionString $Env:HEAD_COMMIT
