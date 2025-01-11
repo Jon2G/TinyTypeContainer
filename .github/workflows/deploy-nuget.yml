@@ -24,11 +24,6 @@ jobs:
         working-directory: ./src
 
     steps:
-      - name: Restore dependencies
-        run: |
-          echo Branch: ${{ github.ref }}
-          echo SHA: ${{ github.base_ref }}
-
       - uses: actions/checkout@v2
 
       - name: Check branch
