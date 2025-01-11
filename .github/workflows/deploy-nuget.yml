@@ -28,17 +28,17 @@ jobs:
 
       - name: Check branch
         run: |
-          echo Branch: '${{ github.event.head_commit }}'
+          echo Branch: '${{ github.event.head_commit.message }}'
           echo Branch: '${{ toJSON(github) }}'
 
       - name: Check merge commit
-        if: startsWith(github.event_name,'merge') && startsWith(github.ref, 'refs/heads/main') && (!contains(github.event.head_commit, 'Merge pull request ') || !contains(github.event.head_commit,'release/'))
+        if: startsWith(github.event_name,'merge') && startsWith(github.ref, 'refs/heads/main') && (!contains(github.event.head_commit.message, 'Merge pull request ') || !contains(github.event.head_commit.message,'release/'))
         run: |
-          echo INVALID COMMIT RELEASE MESSAGE: '${{ github.event.head_commit }}'
+          echo INVALID COMMIT RELEASE MESSAGE: '${{ github.event.head_commit.message }}'
           exit 1
 
       - uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
-        if: startsWith(github.ref, 'refs/heads/main') && contains(github.event.head_commit, 'Merge pull request ') && contains(github.event.head_commit,'release/')
+        if: startsWith(github.ref, 'refs/heads/main') && contains(github.event.head_commit.message, 'Merge pull request ') && contains(github.event.head_commit.message,'release/')
         id: GetBuildVersion # Remember to give an ID if you need the output filename
         name: Download GetBuildVersion.psm1
         with:
@@ -47,9 +47,9 @@ jobs:
           filename: GetBuildVersion.psm1
 
       - name: GetBuildVersion.psm1
-        if: startsWith(github.ref, 'refs/heads/main') && contains(github.event.head_commit, 'Merge pull request ') && contains(github.event.head_commit,'release/')
+        if: startsWith(github.ref, 'refs/heads/main') && contains(github.event.head_commit.message, 'Merge pull request ') && contains(github.event.head_commit.message,'release/')
         run: |
-          export HEAD_COMMIT = '${{github.event.head_commit}}'
+          export HEAD_COMMIT = '${{github.event.head_commit.message}}'
           Import-Module .\GetBuildVersion.psm1
           Write-Host $Env:HEAD_COMMIT
           $version = GetBuildVersion -VersionString $Env:HEAD_COMMIT
@@ -58,7 +58,7 @@ jobs:
         shell: pwsh
 
       - name: Setup NuGet
-        if: startsWith(github.ref, 'refs/heads/main') && contains(github.event.head_commit, 'Merge pull request ') && contains(github.event.head_commit,'release/')
+        if: startsWith(github.ref, 'refs/heads/main') && contains(github.event.head_commit.message, 'Merge pull request ') && contains(github.event.head_commit.message,'release/')
         uses: NuGet/setup-nuget@v2
 
       - name: Setup dotnet
@@ -94,5 +94,5 @@ jobs:
       #     path: ./TestResults.trx
 
       - name: Publish
-        if: startsWith(github.ref, 'refs/heads/main') && contains(github.event.head_commit, 'Merge pull request ') && contains(github.event.head_commit,'release/')
+        if: startsWith(github.ref, 'refs/heads/main') && contains(github.event.head_commit.message, 'Merge pull request ') && contains(github.event.head_commit.message,'release/')
         run: dotnet nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
