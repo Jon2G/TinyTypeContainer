@@ -31,6 +31,12 @@ jobs:
           echo Branch: '${{ github.event.head_commit }}'
           echo Branch: '${{ toJSON(github) }}'
 
+      - name: Check merge commit
+        if: startsWith(github.event_name,'merge') && startsWith(github.ref, 'refs/heads/main') && (!contains(github.event.head_commit, 'Merge pull request ') || !contains(github.event.head_commit,'release/'))
+        run: |
+          echo INVALID COMMIT RELEASE MESSAGE: '${{ github.event.head_commit }}'
+          exit 1
+
       - uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
         if: startsWith(github.ref, 'refs/heads/main') && contains(github.event.head_commit, 'Merge pull request ') && contains(github.event.head_commit,'release/')
         id: GetBuildVersion # Remember to give an ID if you need the output filename
