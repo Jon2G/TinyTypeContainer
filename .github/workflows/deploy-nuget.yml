@@ -28,10 +28,8 @@ jobs:
 
       - name: Check branch
         run: |
-          export LATESTLOG=$(git log -1 --pretty=%B)
-          export SOURCEBRANCH=$(echo $LATESTLOG | awk -F '\\\\n' '{print $1}' |  awk -F '/' '{print $2}' | awk '{print $1}')
           echo Branch: '${{ github.ref }}'
-          echo Source branch: $SOURCEBRANCH
+          echo Branch: '${{ github.head_ref }}'
 
       - uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
         if: startsWith(github.ref, 'refs/heads/main') && startsWith(github.base_ref, 'refs/heads/release')
@@ -46,9 +44,9 @@ jobs:
         if: startsWith(github.ref, 'refs/heads/main') && startsWith(github.base_ref, 'refs/heads/release')
         run: |
           Import-Module .\GetBuildVersion.psm1
-          Write-Host $Env:SOURCEBRANCH
-          $version = GetBuildVersion -VersionString $Env:SOURCEBRANCH
-          echo "BUILD_VERSION=$version" | Out-File -FilePath $Env:SOURCEBRANCH -Encoding utf-8 -Append
+          Write-Host $Env:HEAD_REF
+          $version = GetBuildVersion -VersionString $Env:HEAD_REF
+          echo "BUILD_VERSION=$version" | Out-File -FilePath $Env:HEAD_REF -Encoding utf-8 -Append
           echo $version
         shell: pwsh
 
