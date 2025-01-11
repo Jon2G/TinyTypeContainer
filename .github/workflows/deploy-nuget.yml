@@ -28,6 +28,7 @@ jobs:
 
       - name: Check branch
         run: |
+          echo Branch: '${{ github.event.head_commit }}'
           echo Branch: '${{ toJSON(github) }}'
 
       - uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
