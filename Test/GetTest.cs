@@ -3,36 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Test.Types;
 using TinyTypeContainer;
 using Xunit.Priority;
 
 namespace Test
 {
-    [CollectionDefinition(nameof(GetTest), DisableParallelization = true),DefaultPriority(1)]
+    [CollectionDefinition(nameof(GetTest), DisableParallelization = true), DefaultPriority(1)]
     public class GetTest
     {
         [Fact, Priority(0)]
         public void ContainerMustBeEmpty()
         {
             Container.Clear();
-            Assert.True(Container.IsEmpty);
+            Container.IsEmpty.Should().BeTrue();
         }
 
         [Fact]
         public void GetorActivate()
         {
             var user = Container.GetorActivate<User>();
-            Assert.NotNull(user);
-            Assert.IsType<User>(user);
+            user.Should().NotBeNull().And.Subject.Should().BeOfType<User>();
         }
 
         [Fact]
         public void GetByTypeArgument()
         {
             var user = Container.Get(typeof(User));
-            Assert.NotNull(user);
-            Assert.IsType<User>(user);
+            user.Should().NotBeNull().And.Subject.Should().BeOfType<User>();
             ((User)user).Name = "Jon2G";
             ((User)user).Id = "1";
             ((User)user).Email = "dummy.email@.com";
@@ -42,15 +41,14 @@ namespace Test
         public void Get()
         {
             var user = Container.Get<User>();
-            Assert.NotNull(user);
-            Assert.IsType<User>(user);
+            user.Should().NotBeNull().And.Subject.Should().BeOfType<User>();
         }
 
         [Fact]
         public void GetRequiredShouldNotReturnNullForRegistered()
         {
             var user = Container.GetRequired<User>();
-            Assert.NotNull(user);
+            user.Should().NotBeNull().And.Subject.Should().BeOfType<User>();
         }
 
         [Fact]
@@ -66,8 +64,7 @@ namespace Test
         public void GetByInterface()
         {
             var ihaveId = Container.Get<IHaveId>();
-            Assert.NotNull(ihaveId);
-            Assert.IsType<User>(ihaveId);
+            ihaveId.Should().NotBeNull().And.Subject.Should().BeOfType<User>();
         }
     }
 }

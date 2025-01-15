@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Test.Types;
 using TinyTypeContainer;
 using Xunit.Priority;
@@ -17,7 +18,7 @@ namespace Test
         public void ContainerMustBeEmpty()
         {
             Container.Clear();
-            Assert.True(Container.IsEmpty);
+            Container.IsEmpty.Should().BeTrue();
         }
 
         [Fact]
@@ -29,9 +30,9 @@ namespace Test
                 Id = "2",
                 Name = "New user"
             });
-            Assert.NotNull(Container.Get<User>());
-            Assert.True(Container.Has<User>());
-            Assert.Equal(Container.GetRequired<User>().Id, "2");
+            Container.Get<User>().Should().NotBeNull();
+            Container.Has<User>().Should().BeTrue();
+            Container.GetRequired<User>().Id.Should().Be("2");
         }
 
         [Fact]
@@ -43,14 +44,14 @@ namespace Test
                 Id = "2",
                 Name = "user"
             });
-            Assert.Equal("2", Container.GetRequired<User>().Id);
+            Container.GetRequired<User>().Id.Should().Be("2");
             Container.Register(new User()
             {
                 Email = "new.email.com",
                 Id = "3",
                 Name = "New user"
             });
-            Assert.Equal("3", Container.GetRequired<User>().Id);
+            Container.GetRequired<User>().Id.Should().Be("3");
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Test.Types;
 using TinyTypeContainer;
 using Xunit.Priority;
@@ -16,7 +17,7 @@ namespace Test
         public void ContainerMustBeEmpty()
         {
             Container.Clear();
-            Assert.True(Container.IsEmpty);
+            Container.IsEmpty.Should().BeTrue();
         }
 
         [Fact]
@@ -26,8 +27,8 @@ namespace Test
             Assert.NotNull(Container.GetRequired<User>());
 
             Container.Unregister<User>();
-            Assert.Null(Container.Get<User>());
-            Assert.False(Container.Has<User>());
+            Container.Get<User>().Should().BeNull();
+            Container.Has<User>().Should().BeFalse();
         }
 
         [Fact]
@@ -42,7 +43,7 @@ namespace Test
         [Fact]
         public void HasShouldReturnFalseForNotRegistered()
         {
-            Assert.False(Container.Has<DummyType>());
+            Container.Has<User>().Should().BeFalse();
         }
 
     }
